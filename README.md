@@ -1,34 +1,48 @@
-# NoComment
+# `js-detect-todo-comments`
 
-A VS Code extension to remove comments from JavaScript and TypeScript files using AST parsing.
+Parse `TODO` comments in JavaScript and TypeScript files using AST parsing. Based on [NoComment](https://github.com/markwylde/nocomment).
+
+> [!IMPORTANT]
+> 
+> This package does **NOT** work in browsers! See the [note below](#browser-note) for more info.
 
 ## Features
 
-- Removes both line comments (`// ...`) and block comments (`/* ... */`) from JS/TS files
-- Preserves code structure and formatting
-- Uses AST parsing for precise comment detection
-- Works with JS, JSX, TS, and TSX files
+- Detects all `TODO:` comments and `@todo` tags in jsDoc comments
+- Returns line and column information along with comment text
+- Uses [`typescript-estree`](https://typescript-eslint.io/packages/typescript-estree), the AST parser powering [ESLint](https://eslint.org/) in TypeScript files
 
 ## Usage
 
-1. Open a JavaScript or TypeScript file
-2. Press `Ctrl+Shift+P` (or `Cmd+Shift+P` on macOS) to open the command palette
-3. Search for and select `NoComment: Remove Comments from Current File`
-4. All comments will be removed from your current file
+```javascript
+import { detectTodoFromFileContent } from "js-detect-comments";
 
-## How It Works
-
-This extension uses the TypeScript ESTree parser to analyze your code's abstract syntax tree and accurately identify and remove comments, preserving the original code structure and functionality.
-
-## Requirements
-
-VS Code 1.60.0 or higher
-
-## Extension Settings
-
-This extension does not add any settings.
+detectTodoFromFileContent("// TODO: improve usage examples");
+// => [{ text: "TODO: improve usage examples", loc: { line: 1, col: 1 }}]
+```
 
 ## Known Limitations
 
-- The extension will not work on files with syntax errors
-- In some rare cases, the removal of line comments that contain entire lines may affect blank line spacing
+- `TODO` comments spanning more than one line only have their first line returned, example:
+    ```js
+    /**
+     * @todo Do something
+     * across 2 lines
+     */
+
+    /*
+    TODO: Something else across
+    more lines
+    */
+
+    // TODO: combine this into
+    // one line
+    ``` 
+- Column information for multiline comments where the `TODO`/`@todo` line starts on a different column from the comment itself is incorrect, example:
+    ```js
+    /*
+    Incorrect column information for below!
+            TODO: Fix this bug.
+            */
+    ```
+- <a id="browser-note"></a> Does not work in browsers because a dependency of `npm:@typescript-eslint/typescript-estree` requires `node:fs` to work.
