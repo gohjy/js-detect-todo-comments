@@ -1,11 +1,35 @@
 import parser from "@typescript-eslint/typescript-estree";
 
-interface TodoComment {
+/**
+ * Represents the location of a todo comment within a file.
+ */
+export interface CommentLocation {
+  /**
+   * The line number of the location.
+   */
+  line: number;
+
+  /**
+   * The column number of the location.
+   */
+  col: number;
+};
+
+/**
+ * Represents a single todo comment.
+ */
+export interface TodoComment {
+  /**
+   * The text of the comment.
+   * 
+   * @example `// TODO: Optimise for performance`
+   */
   text: string;
-  loc: {
-    col: number;
-    line: number;
-  }
+
+  /**
+   * The location of the comment within the source code
+   */
+  loc: CommentLocation;
 };
 
 /**
@@ -86,7 +110,14 @@ const getTodoFromMultiline = (
   return todoLines;
 };
 
-export function detectTodoFromFileContent(fileContent: string) {
+/**
+ * Given a JavaScript or TypeScript source code,
+ * detect all todo comments.
+ * 
+ * @param {string} fileContent The source code to be parsed.
+ * @returns {Array<TodoComment>} An array of parsed todo comments.
+ */
+export function detectTodoFromFileContent(fileContent: string): Array<TodoComment> {
   const parseOptions = {
     comment: true,
     jsx: false,
@@ -103,6 +134,18 @@ export function detectTodoFromFileContent(fileContent: string) {
   return result;
 };
 
+/**
+ * Given an array of {@linkcode parser.TSESTree.Comment}s, 
+ * detect all todo comments.
+ * 
+ * This is intended to be called only by 
+ * {@linkcode detectTodoFromFileContent},
+ * and is exposed solely for convenience if your code
+ * already generates a {@linkcode parser.ESTSTree}.
+ * 
+ * @param comments An array of AST comments. May include non-todo comments.
+ * @returns An array of {@linkcode TodoComment}s.
+ */
 export function detectTodoFromASTComments(comments: Array<parser.TSESTree.Comment>): Array<TodoComment> {
   if (comments.length === 0) {
     return [];
