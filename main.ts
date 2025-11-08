@@ -154,35 +154,3 @@ export function detectTodoFromASTComments(comments: Array<parser.TSESTree.Commen
 
   return todoComments;
 }
-
-console.log(JSON.stringify(detectTodoFromFileContent(`
-  // TODO: DO something!
-
-  /* hi1 */
-  /* TODO: hi.5 */
-  /*
-   hi2
-
-   w*/
-
-   /* 
-   hi2.5
-
-   TODO: hi2.5 Embedded in here! 
-
-   ww*/
-
-   /* 
-   TODO: hi2.7*/
-  /**d
-   * hi3
-   * hi3.1
-   * hi3.2
-   * @todo hi3.25
-   * TODO: hi3.27
-   * hi3.3
-   */
-  `)
-
-
-,null,2))

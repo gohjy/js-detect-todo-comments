@@ -1,5 +1,17 @@
-{
+{ 
+  "tasks": {
+    "test": "deno test -E --allow-sys='cpus' -R='testSampleCode.ts'"
+  },
+  "test": {
+    "include": ["./test.ts"]
+  },
   "imports": {
     "@typescript-eslint/typescript-estree": "npm:@typescript-eslint/typescript-estree@^8.46.3"
+  },
+  "lint": {
+    "rules": {
+      "exclude": ["no-import-prefix"]
+    },
+    "exclude": ["./testSampleCode.ts"]
   }
 }
